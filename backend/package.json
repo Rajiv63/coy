@@ -1,0 +1,22 @@
+{
+  "name": "coy-backend",
+  "version": "1.0.0",
+  "description": "Coy API backend – Express + better-sqlite3",
+  "type": "commonjs",
+  "main": "src/index.js",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "seed": "node src/scripts/seed.js",
+    "reset": "node src/scripts/reset.js",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.5"
+  }
+}
