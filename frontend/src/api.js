@@ -1,6 +1,11 @@
 /**
  * Base URL for all API calls.
- * - In development: empty string → Vite proxy forwards /api/* to localhost:5000
- * - In production: set VITE_API_URL=https://coy-t6ef.onrender.com in your host's env vars
+ * - localhost → empty string (Vite proxy forwards /api/* to localhost:5000)
+ * - Any other host (Vercel, Netlify, etc.) → Render backend URL
  */
-export const API_BASE = import.meta.env.VITE_API_URL ?? '';
+const isLocalhost =
+  typeof window !== 'undefined' &&
+  (window.location.hostname === 'localhost' ||
+    window.location.hostname === '127.0.0.1');
+
+export const API_BASE = isLocalhost ? '' : 'https://coy-t6ef.onrender.com';
