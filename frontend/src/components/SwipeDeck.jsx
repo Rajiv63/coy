@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Heart, X, RotateCcw, RefreshCw, AlertCircle, ArrowLeft, ArrowRight } from 'lucide-react';
 import ProfileCard from './ProfileCard.jsx';
+import { API_BASE } from '../api.js';
 
 export default function SwipeDeck({
   initialProfiles,
@@ -39,7 +40,7 @@ export default function SwipeDeck({
 
       // 3. Dispatch POST /api/swipe in background
       try {
-        const response = await fetch('/api/swipe', {
+        const response = await fetch(`${API_BASE}/api/swipe`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -89,7 +90,7 @@ export default function SwipeDeck({
   const handleResetDemo = async () => {
     setIsResetting(true);
     try {
-      const res = await fetch('/api/reset', { method: 'POST' });
+      const res = await fetch(`${API_BASE}/api/reset`, { method: 'POST' });
       if (res.ok) {
         onRefresh();
       }

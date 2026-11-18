@@ -3,6 +3,7 @@ import { Flame, Shield, Info } from 'lucide-react';
 import SwipeDeck from './SwipeDeck.jsx';
 import MatchesView from './MatchesView.jsx';
 import MatchModal from './MatchModal.jsx';
+import { API_BASE } from '../api.js';
 
 export default function DiscoverView({ onMatchCountChange }) {
   const [subView, setSubView] = useState('swipe');
@@ -19,7 +20,7 @@ export default function DiscoverView({ onMatchCountChange }) {
     setLoadingFeed(true);
     setFeedError(null);
     try {
-      const res = await fetch('/api/feed', { cache: 'no-store' });
+      const res = await fetch(`${API_BASE}/api/feed`, { cache: 'no-store' });
       if (!res.ok) {
         throw new Error(`Failed to load feed (${res.status})`);
       }
@@ -37,7 +38,7 @@ export default function DiscoverView({ onMatchCountChange }) {
   const fetchMatches = useCallback(async () => {
     setLoadingMatches(true);
     try {
-      const res = await fetch('/api/matches', { cache: 'no-store' });
+      const res = await fetch(`${API_BASE}/api/matches`, { cache: 'no-store' });
       if (!res.ok) {
         throw new Error(`Failed to load matches (${res.status})`);
       }
