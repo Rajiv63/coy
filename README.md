@@ -1,6 +1,6 @@
-# Coy — Privacy-First Dating App
+# Coy Discover Tab: SDE Intern Assignment (Part B)
 
-> **Coy** is a swipe-based dating application engineered around a zero-leak privacy promise: **incoming likes are strictly confidential until the feeling is mutual.** No user can ever see, filter, or be tipped off that someone liked them unless both users have swiped right.
+Standalone app built for the Coy SDE Intern assignment. Coy is a double-blind crush-matching app; this adds a swipe-based Discover tab that preserves its core privacy promise.
 
 ---
 
@@ -13,25 +13,28 @@
 6. [Zero-Leak Privacy Guarantees](#zero-leak-privacy-guarantees)
 7. [Running Tests](#running-tests)
 8. [Demo Guide: Seeded Incoming Likes](#demo-guide-seeded-incoming-likes)
-9. [Deployment Notes](#deployment-notes)
+9. [Screenshots](#screenshots)
+10. [Deployment Notes](#deployment-notes)
+11. [Troubleshooting](#troubleshooting)
+12. [Part A: Feature Suggestions](#part-a-feature-suggestions)
 
 ---
 
 ## Tech Stack & Architecture
 
 - **Frontend (`/frontend`)**:
-  - React 18 with Vite for ultra-fast bundling and development.
+  - React 18 with Vite for fast bundling and development.
   - Tailwind CSS for mobile-first, responsive dark theme.
   - Framer Motion for swipe gestures, card physics (rotation + displacement), fading stamps (LIKE/NOPE), and smooth exit transitions.
-  - Lucide React for modern, consistent icons.
+  - Lucide React for icons.
   - Vite Proxy: maps `/api/*` to `http://localhost:5000` during local development.
 - **Backend (`/backend`)**:
   - Node.js + Express with modular routes, controllers, and services.
-  - SQLite via `better-sqlite3` (synchronous, zero-latency C++ bindings, WAL mode enabled).
+  - SQLite via `better-sqlite3` (synchronous C++ bindings, WAL mode enabled).
   - File-based database automatically created and seeded on first run in `/backend/data/coy.db`.
   - CORS enabled for the client origin.
 - **Testing**:
-  - Vitest test suite (`19 tests`) verifying feed exclusion, zero leak fields, idempotent swipes, and mutual-only matching.
+  - Vitest test suite (19 tests) verifying feed exclusion, zero leak fields, idempotent swipes, and mutual-only matching.
 - **Authentication**:
   - Single-user demo environment with logged-in user ID `"me"`.
 
@@ -43,7 +46,9 @@
 coy-sde-intern-assignment/
 ├── package.json             # Root orchestrator (scripts for dev, seed, reset, test)
 ├── .gitignore               # Ignores node_modules, .env, and SQLite .db files
-├── README.md                # Documentation and demo guide
+├── README.md                # This file
+├── PART_A.md                # Part A: Feature Suggestions
+├── docs/                    # Screenshot placeholders (add images here)
 ├── backend/
 │   ├── package.json         # Express & better-sqlite3 dependencies
 │   ├── vitest.config.mjs    # Vitest configuration
@@ -55,14 +60,15 @@ coy-sde-intern-assignment/
 │   │   ├── controllers/
 │   │   │   └── swipeController.js
 │   │   ├── services/
-│   │   │   └── swipeService.js # Core business logic & database queries
+│   │   │   └── swipeService.js  # Core business logic & database queries
 │   │   ├── db/
 │   │   │   ├── index.js     # Schema definition, pragma, DB connector
+│   │   │   └── seedData.js  # 32 mock profiles & 7 pre-liked IDs
 │   │   └── scripts/
 │   │       ├── seed.js      # CLI seed script
 │   │       └── reset.js     # CLI reset & wipe script
 │   └── tests/
-│       └── swipeService.test.mjs # 19 privacy & correctness unit tests
+│       └── swipeService.test.mjs  # 19 privacy & correctness unit tests
 └── frontend/
     ├── package.json         # React, Vite, Tailwind, Framer Motion
     ├── vite.config.js       # Vite config with /api proxy to localhost:5000
@@ -114,7 +120,7 @@ Open your browser at **`http://localhost:5173`**.
 
 ## Database Schema
 
-SQLite schema defined in `server/src/db/index.js`:
+SQLite schema defined in `backend/src/db/index.js`:
 
 ```sql
 CREATE TABLE IF NOT EXISTS profiles (
@@ -154,6 +160,8 @@ CREATE INDEX IF NOT EXISTS idx_matches_b ON matches(user_b);
 ---
 
 ## API Documentation
+
+> All endpoints are served under the `/api` prefix (GET /api/feed, POST /api/swipe, GET /api/matches).
 
 ### 1. `GET /api/feed`
 Returns list of profiles that `"me"` has **not swiped on yet**.
@@ -241,6 +249,8 @@ Returns only mutual matches for user `"me"`.
 ### 4. `POST /api/reset`
 Wipes all swipes and matches, re-seeding the 32 mock profiles and 7 pre-liked incoming swipes for a fresh demo run.
 
+> ⚠️ **Demo-only.** This endpoint resets all user data. Remove or protect it behind authentication before deploying to production.
+
 - **Response `200 OK`**:
 ```json
 {
@@ -256,12 +266,12 @@ Wipes all swipes and matches, re-seeding the 32 mock profiles and 7 pre-liked in
 1. **Feed Isolation**:
    - The query for `/api/feed` only joins `swipes` to **exclude** profiles where `swiper_id = 'me'`.
    - Incoming likes (`target_id = 'me'`) are **never** queried or evaluated in feed generation.
-   - Ordering is strictly deterministic by row ID, preventing any popularity or incoming-like clustering.
+   - Ordering is deterministic by row ID, not by popularity or incoming-like activity.
 2. **Strict Response Sanitization**:
    - Feed profiles only contain public keys (`id`, `name`, `age`, `photo`, `bio`, `location`, `interests`).
-   - Zero leak properties (`liked`, `likedYou`, `hasLikedMe`, `direction`, `swiper_id`) are returned.
+   - Leak properties (`liked`, `likedYou`, `hasLikedMe`, `direction`, `swiper_id`) are never returned.
 3. **Atomic Mutual-Only Match Creation**:
-   - Matches are created within an atomic transaction **only** when `direction === 'like'` **and** a reciprocal like already exists in `swipes`.
+   - Matches are created within a transaction **only** when `direction === 'like'` **and** a reciprocal like already exists in `swipes`.
    - If the user passes someone who liked them, **no match** is created, and the response is `{ matched: false }`.
 4. **Indistinguishable Rejection**:
    - Passing a profile and liking a profile who has not liked you return the exact same `{ matched: false }` payload.
@@ -272,11 +282,11 @@ Wipes all swipes and matches, re-seeding the 32 mock profiles and 7 pre-liked in
 
 ## Running Tests
 
-The test suite contains 19 comprehensive Vitest unit tests in `server/tests/swipeService.test.mjs` verifying the business logic and privacy boundaries against an isolated in-memory SQLite database:
+The test suite contains 19 Vitest unit tests in `backend/tests/swipeService.test.mjs` verifying business logic and privacy boundaries against an isolated in-memory SQLite database:
 
 ```bash
 # Run tests from the root directory
-npm run test
+npm test
 ```
 
 ### Test coverage breakdown:
@@ -313,15 +323,37 @@ To facilitate testing mutual matches during a live demo, **7 seeded profiles** h
 
 - Swiping **Pass** on any of these profiles silently declines them with zero hints.
 - Swiping **Like** on any of the other 25 profiles records the like but returns `{ matched: false }` without revealing that they haven't liked you back.
-- When all cards are swiped, you can click **"Reset Demo Database"** directly in the app or run `npm run reset` in terminal.
+- When all cards are swiped, click **"Reset Demo Database"** in the app or run `npm run reset` in the terminal.
+
+---
+
+## Screenshots
+
+| Swipe | Match | Matches |
+|-------|-------|---------|
+| ![Swipe](docs/swipe.png) | ![Match](docs/match.png) | ![Matches](docs/matches.png) |
 
 ---
 
 ## Deployment Notes
 
 - **Render / Railway / Fly.io**:
-  - SQLite creates a local file at `/server/data/coy.db`.
-  - For persistent storage across container restarts or deploys on platforms like Render, attach a **Persistent Disk** mounted at `/server/data`.
+  - SQLite creates a local file at `/backend/data/coy.db`.
+  - For persistent storage across container restarts or deploys on platforms like Render, attach a **Persistent Disk** mounted at `/backend/data`.
   - Alternatively, in production environments with distributed instances, replace `better-sqlite3` with PostgreSQL or Turso (libSQL).
 - **Static Frontend**:
   - The frontend can be built via `npm run build --prefix frontend` and served via Nginx, Vercel, or directly as static files from Express.
+
+---
+
+## Troubleshooting
+
+- **`better-sqlite3` fails to install on Windows**: It requires native compilation. Install [Visual Studio Build Tools](https://visualstudio.microsoft.com/visual-cpp-build-tools/) (C++ workload) and Python 3, or use Node.js v18+ which ships with prebuilt binaries for common platforms.
+- **Port already in use**: Backend defaults to port 5000. If that port is taken, set `PORT=5001` before running `npm run dev`.
+- **DB not seeding**: Delete `backend/data/coy.db` and restart the server, or run `npm run reset` to wipe and re-seed.
+
+---
+
+## Part A: Feature Suggestions
+
+See [PART_A.md](PART_A.md) for feature ideas and product suggestions for Coy.

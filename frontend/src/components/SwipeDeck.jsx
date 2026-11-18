@@ -103,8 +103,8 @@ export default function SwipeDeck({
   // 1. Loading State
   if (loading) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center p-6 select-none">
-        <div className="relative w-full max-w-sm aspect-[3/4.2] rounded-2xl bg-slate-800/40 border border-slate-700/50 animate-pulse flex flex-col justify-end p-6">
+      <div className="flex-1 min-h-0 flex flex-col items-center justify-center p-6 select-none">
+        <div className="relative w-full max-w-sm flex-1 min-h-0 max-h-[480px] rounded-2xl bg-slate-800/40 border border-slate-700/50 animate-pulse flex flex-col justify-end p-6">
           <div className="h-7 w-48 bg-slate-700/60 rounded-md mb-2" />
           <div className="h-4 w-32 bg-slate-700/40 rounded-md mb-4" />
           <div className="h-3 w-full bg-slate-700/30 rounded-md mb-1.5" />
@@ -182,9 +182,9 @@ export default function SwipeDeck({
   const nextProfile = profiles.length > 1 ? profiles[1] : null;
 
   return (
-    <div className="flex-1 h-full flex flex-col p-4 overflow-hidden relative select-none">
+    <div className="flex-1 min-h-0 h-full flex flex-col p-4 overflow-hidden relative select-none">
       {/* Card Stack Container */}
-      <div className="relative flex-1 w-full max-w-sm mx-auto aspect-[3/4.2] my-auto">
+      <div className="relative flex-1 min-h-0 w-full max-w-sm mx-auto">
         {/* Next Card behind */}
         {nextProfile && (
           <ProfileCard

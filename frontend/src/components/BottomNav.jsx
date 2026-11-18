@@ -3,7 +3,7 @@ import { Home, Compass } from 'lucide-react';
 
 export default function BottomNav({ active, onChange, matchCount = 0 }) {
   return (
-    <nav className="w-full bg-slate-950/90 backdrop-blur-md border-t border-slate-800/80 px-6 py-2.5 flex items-center justify-around z-30 select-none">
+    <nav className="w-full shrink-0 bg-slate-950/90 backdrop-blur-md border-t border-slate-800/80 px-6 pt-2.5 pb-[max(10px,env(safe-area-inset-bottom))] flex items-center justify-around z-30 select-none">
       {/* Home tab (completely blank placeholder) */}
       <button
         onClick={() => onChange('home')}
