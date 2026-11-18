@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Heart, MessageCircle, MapPin, X, ShieldCheck } from 'lucide-react';
+import { Heart, MapPin, X, ShieldCheck } from 'lucide-react';
 
 export default function MatchesView({ matches, loading, onStartSwiping }) {
   const [selectedMatch, setSelectedMatch] = useState(null);
@@ -87,11 +87,6 @@ export default function MatchesView({ matches, loading, onStartSwiping }) {
                   <span className="truncate">{match.location}</span>
                 </div>
               </div>
-
-              {/* Chat icon */}
-              <div className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-950/70 backdrop-blur-md border border-slate-700/60 flex items-center justify-center text-rose-400 shadow">
-                <MessageCircle className="w-3.5 h-3.5" />
-              </div>
             </div>
           ))}
         </div>
@@ -167,16 +162,6 @@ export default function MatchesView({ matches, loading, onStartSwiping }) {
                   Matched on {new Date(selectedMatch.matched_at).toLocaleDateString()} with full mutual privacy.
                 </span>
               </div>
-
-              <button
-                onClick={() => {
-                  alert(`Direct chat with ${selectedMatch.name} is arriving in the next release!`);
-                }}
-                className="w-full py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-semibold text-xs flex items-center justify-center gap-2 shadow-lg shadow-rose-600/30 transition-all active:scale-98"
-              >
-                <MessageCircle className="w-4 h-4" />
-                <span>Say Hello</span>
-              </button>
             </div>
           </div>
         </div>

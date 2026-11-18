@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Heart, MessageCircle, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Heart, ArrowRight, ShieldCheck } from 'lucide-react';
 
 export default function MatchModal({ matchedProfile, onKeepSwiping, onViewMatches }) {
   const canvasRef = useRef(null);
@@ -161,7 +161,7 @@ export default function MatchModal({ matchedProfile, onKeepSwiping, onViewMatche
             onClick={onViewMatches}
             className="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-rose-500 to-pink-600 hover:from-rose-600 hover:to-pink-700 text-white font-semibold text-xs shadow-lg shadow-rose-600/30 flex items-center justify-center gap-2 transition-all active:scale-[0.98]"
           >
-            <MessageCircle className="w-4 h-4" />
+            <Heart className="w-4 h-4" />
             <span>View Matches</span>
             <ArrowRight className="w-4 h-4" />
           </button>
